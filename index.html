@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración del Juego</title>
+    <style>
+        :root {
+            --yellow: #FCD307;
+            --orange: #FFBC00;
+            --black: #000000;
+            --gray: #E2E2E2;
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --dark-gray: #888888;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--gray);
+            color: var(--black);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .config-container {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1, h2 {
+            color: var(--black);
+            margin-top: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: clamp(1.8rem, 4vw, 2.2rem);
+            color: #333;
+        }
+
+        h2 {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--yellow);
+        }
+
+        input[type="text"], input[type="file"], select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0 15px;
+            border: 2px solid var(--gray);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, 
+        input[type="file"]:focus, 
+        select:focus, 
+        textarea:focus {
+            border-color: var(--yellow);
+            outline: none;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        button {
+            background-color: var(--yellow);
+            color: var(--black);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 8px 0;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--orange);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        ul li {
+            background-color: var(--light-gray);
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .question-content {
+            margin-bottom: 12px;
+        }
+
+        .question-content span {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: block;
+            border: 1px solid var(--gray);
+        }
+
+        .question-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .question-actions button {
+            flex: 1 1 calc(50% - 10px);
+            min-width: 100px;
+            padding: 10px;
+            font-size: 0.9em;
+            margin: 0;
+        }
+
+        #image-preview {
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        #preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+        }
+
+        /* Estilos para el botón de guardar */
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos para la celebración */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+            color: white;
+            text-align: center;
+        }
+
+        .celebration h2 {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            border: none;
+        }
+
+        .celebration p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        .celebration button {
+            background-color: var(--yellow);
+            color: var(--black);
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            max-width: 300px;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            animation: fall 5s linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Media Queries para diferentes tamaños de pantalla */
+        @media (min-width: 600px) {
+            body {
+                align-items: center;
+                padding: 30px;
+            }
+            
+            .config-container {
+                padding: 30px;
+            }
+            
+            button {
+                width: auto;
+            }
+            
+            .question-actions button {
+                flex: 0 1 auto;
+                min-width: 100px;
+            }
+            
+            ul li {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .question-content {
+                flex: 1 1 60%;
+                margin-bottom: 0;
+                padding-right: 15px;
+            }
+            
+            .question-actions {
+                flex: 1 1 35%;
+                justify-content: flex-end;
+                margin-top: 0;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .question-actions {
+                flex: 0 1 auto;
+                gap: 12px;
+            }
+            
+            .question-content {
+                flex: 1 1 70%;
+            }
+
+            .question-actions button {
+                flex: 0 1 auto;
+                padding: 10px 15px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .config-container {
+                padding: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="config-container">
+        <h1>Configuración del Juego</h1>
+        
+        <h2>Añadir Nueva Pregunta</h2>
+        <label for="new-question">Pregunta:</label>
+        <input type="text" id="new-question" placeholder="Escribe tu pregunta aquí">
+        
+        <label for="new-explanation">Explicación:</label>
+        <textarea id="new-explanation" placeholder="Explica la respuesta correcta"></textarea>
+        
+        <label for="new-image">Imagen (opcional):</label>
+        <input type="file" id="new-image" accept="image/*">
+        
+        <div id="image-preview" style="display: none;">
+            <img id="preview" src="" alt="Vista previa de la imagen">
+        </div>
+        
+        <label for="new-answer">Respuesta correcta:</label>
+        <select id="new-answer">
+            <option value="true">Verdadero</option>
+            <option value="false">Falso</option>
+        </select>
+        
+        <button onclick="addQuestion()">Añadir Pregunta</button>
+        
+        <h2>Preguntas Configuradas</h2>
+        <ul id="questions-list"></ul>
+        
+        <button class="save-btn" onclick="saveConfig()">Guardar Configuración</button>
+    </div>
+
+
+    <script>
+       let questions = [
+            {
+                question: "¿La Tierra es plana? 🌍",
+                explanation: "La Tierra es un esferoide oblato, lo que significa que es casi esférica pero achatada en los polos.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.YZbOF-7qdP4qC9MSsS0uoAHaEK%26pid%3DApi&f=1&ipt=6e38dfba58b7d524678e900d4dee9d26acd2397e40f9f2eb8ec4a686620e69e4&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El sol es una estrella? ☀️",
+                explanation: "El sol es una estrella, específicamente una enana amarilla, que se encuentra en el centro de nuestro sistema solar.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.aeORfQGENV-UVKitxh6fsAHaGK%26r%3D0%26pid%3DApi&f=1&ipt=ffaacc049efb225d35eb91f6b8a0b744c9517ea624c95f53343834ce6f361ea9&ipo=images",
+                answer: true
+            },
+            {
+                question: "¿Los humanos solo usamos el 10% de nuestro cerebro? 🧠",
+                explanation: "Los humanos usamos virtualmente todas las partes de su cerebro, y el cerebro está activo incluso durante el sueño.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.DpD9FHFD2U4LBy2rmf6noAHaFl%26pid%3DApi&f=1&ipt=f950a0cbaf4f698d9f6aa9881690c9bc586e41bd68f73088b1bdd7087853bda6&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El Monte Everest es la montaña más alta del mundo? ⛰️",
+                explanation: "El Monte Everest es la montaña más alta sobre el nivel del mar, con una altitud de 8,848 metros.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.FXBuJ8RmUJkOTSC-qd-M6wHaEK%26pid%3DApi&f=1&ipt=059e68f1624e5e5ae2259056865621d651dfb4cadb407b6e0e4067cc3544007d&ipo=images",
+                answer: true
+            },
+            {
+                question: "¿Los murciélagos son ciegos? 🦇",
+                explanation: "Los murciélagos no son ciegos; de hecho, muchos tienen una visión bastante buena y también utilizan la ecolocalización para navegar.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.dF8jjjftdFjdd29Ma6TxHgHaE8%26r%3D0%26pid%3DApi&f=1&ipt=54d62ab824e496c7fb5e71186dded91ecb4e06345e8e5b1c4dbb8a9ec0b79cb8&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿La Gran Muralla China es visible desde el espacio? 👨‍🚀",
+                explanation: "La Gran Muralla China no es fácilmente visible desde el espacio a simple vista sin ayuda.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.23B4-2ZKvattCVtoFMz9YwAAAA%26pid%3DApi&f=1&ipt=432e6a0af2c6a22da77f7cd1fdc899eeb1211c77094d61b4a24acf883631386f&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El café se hace a partir de hojas? ☕",
+                explanation: "El café se hace a partir de los granos tostados de la planta del café, no de las hojas.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.explicit.bing.net%2Fth%3Fid%3DOIP.i8Bez0IQSJUCD8VYkE0enQHaFj%26pid%3DApi&f=1&ipt=60b62fe7595663913a3be217ba61fbb6f001090d69cf82ad6f818b9d5e908c1f&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El Océano Atlántico es el más grande de la Tierra? 🌊",
+                explanation: "El Océano Pacífico es el más grande de la Tierra, cubriendo más de 30% de la superficie del planeta.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.v3bvZOHNeHsFU_-8YTg28QHaEK%26r%3D0%26pid%3DApi&f=1&ipt=e0941d1ddbd911d4cd945584a5306bae9386173e01a66cb55d7d9446b18e136d&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿La luz del sol tarda aproximadamente 8 minutos en llegar a la Tierra? 🌞",
+                explanation: "La luz del sol tarda aproximadamente 8 minutos y 20 segundos en llegar a la Tierra.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.ctc_iQboqZZkRElv1Rk4dQHaEK%26r%3D0%26pid%3DApi&f=1&ipt=78a791cdc1f88cde7b9b4452e8d35baf5a0fc3ff4d65c808ec11912a7939463c&ipo=images",
+                answer: true
+            },
+
+            {
+                question: "¿El diamante es el material natural más duro conocido? 💎",
+                explanation: "El diamante es el material natural más duro conocido, lo que lo hace extremadamente resistente a los arañazos.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.NdJB1WTNmrGzeOPq3gUi-AHaEK%26r%3D0%26pid%3DApi&f=1&ipt=2470210611c22e359cc39f3b3d5ce8936b3ba05155d5dfb0c94624ecb6e9fa34&ipo=images",
+                answer: true
+            },
+            {
+                question: "¿Los camellos almacenan agua en sus jorobas? 🐫",
+                explanation: "Los camellos almacenan grasa en sus jorobas, no agua. Esta grasa puede convertirse en energía y agua cuando se metaboliza.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.8-d_7h7PU3e46xMBZk9XdgHaFj%26r%3D0%26pid%3DApi&f=1&ipt=bb4926dead1ebf8637a02cc6e77e39fe2ab5748db2b5179e8819aad3e5126926&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El sonido viaja más rápido en el agua que en el aire? 🌊🎵",
+                explanation: "El sonido viaja más rápido en el agua que en el aire porque las partículas en el agua están más cerca unas de otras.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.q62B3XMp6JPk_rgklO3rsgHaE8%26r%3D0%26pid%3DApi&f=1&ipt=97013ca484d65196c09b29a1fdabafb9b1122e4b20c5f7ad3c719722912f57e8&ipo=images",
+                answer: true
+            },
+            {
+                question: "¿La Luna tiene un lado oscuro que nunca recibe luz solar? 🌑",
+                explanation: "La Luna tiene un lado lejano que nunca es visible desde la Tierra, pero recibe luz solar al igual que el lado cercano.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.VwGY_vVPFHx1RBha4tzTSwHaEK%26pid%3DApi&f=1&ipt=10278a6ecb31930544e345d5e6ba73696512d2da1e70cb013b49abb5e5cd6688&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El cuerpo humano tiene más bacterias que células humanas? 🦠",
+                explanation: "El cuerpo humano tiene aproximadamente el mismo número de células bacterianas que células humanas, aunque las bacterias son mucho más pequeñas.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.0phKcNdWlPna3KnJ4Zg54QHaE8%26pid%3DApi&f=1&ipt=e277f6d1886cb11cbb76ccfee9089e59208bdd61410601996153dd19feeb9a6b&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El oro es el metal más pesado? 🏆",
+                explanation: "El oro es pesado, pero no es el metal más pesado. Metales como el osmio y el iridio son más densos.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.0aoUqQejtfUwtyakAvPSZAHaE7%26pid%3DApi&f=1&ipt=1a4fc190b05a18ad3e7ac7f637b3b842bdcd98190fc5065a1b150e1b11cc4090&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El desierto del Sahara es el más grande del mundo? 🏜️",
+                explanation: "El desierto del Sahara es el desierto caliente más grande del mundo, pero el desierto de la Antártida es el más grande en general.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.daCnVn_2XH_AQ-OG4j1iEgHaE7%26pid%3DApi&f=1&ipt=592d765ef8d0d818152e88567fb27c2ee39b2f21e8547cbaf8d9f781afe3509a&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El corazón humano late más de 100,000 veces al día? ❤️",
+                explanation: "El corazón humano late aproximadamente 100,000 veces al día, bombeando sangre a través del cuerpo.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.U8t-9xcjOGAdVEZCGn3hlAHaFi%26pid%3DApi&f=1&ipt=7a298586e77275ac30078d6c53b270b2a885575f549c6787ccfbaea5ecf6ff30&ipo=images",
+                answer: true
+            },
+            {
+                question: "¿La miel nunca se echa a perder? 🍯",
+                explanation: "La miel tiene una vida útil extremadamente larga debido a su baja actividad de agua y acidez, pero puede cristalizar o fermentar con el tiempo.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.cEWXCrwxTcJU0A84A3WJfAHaFY%26r%3D0%26pid%3DApi&f=1&ipt=6c9ab5b7057ee0c2d7b0af792298891308522ece8bcc4882a6194052e0e34fdb&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El plátano es una baya? 🍌",
+                explanation: "Botánicamente, el plátano es considerado una baya porque se desarrolla a partir de una sola flor con un solo ovario.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.1P41CRXHhBLS0J6w3OUVEwHaEj%26r%3D0%26pid%3DApi&f=1&ipt=c4872e1e3b2d08a9583374cdc129fd1321d5086b4a5c437c16c66895c96e1380&ipo=images",
+                answer: true
+            },
+            {
+                question: "¿Los pulpos tienen tres corazones? 🐙",
+                explanation: "Los pulpos tienen tres corazones: dos bombean sangre a las branquias y uno al resto del cuerpo.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.explicit.bing.net%2Fth%3Fid%3DOIP.qmHR7D9G0GCmiDuCjVGhhwHaEh%26pid%3DApi&f=1&ipt=e869db9b7973d102450dc3b1cba1f9eab40f07b61d442f4def8dbd128ad736d4&ipo=images",
+                answer: true
+            },
+            {
+                question: "¿El acero inoxidable no se oxida? 🔩",
+                explanation: "El acero inoxidable es resistente a la corrosión y al óxido debido a la capa de óxido de cromo que se forma en su superficie.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.cLOshfhGdIfS5148w1kTWwHaEc%26r%3D0%26pid%3DApi&f=1&ipt=04d6bdde4c32520d47ee29133459fae6c25c25f37fa421b66f349aee88551d41&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El tomate es una fruta? 🍅",
+                explanation: "Botánicamente, el tomate es una fruta porque se desarrolla a partir del ovario de una flor y contiene semillas.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.H-C3f3qRk0QFAjf9OIAbwgHaD5%26pid%3DApi&f=1&ipt=f8a7032d88c729fd5df53272ee3a0a713ca8dcf6f4c91250f2c578fb3d945cc7&ipo=images",
+                answer: true
+            },
+            {
+                question: "¿El ajedrez fue inventado en China? ♟️",
+                explanation: "El ajedrez fue inventado en la India, no en China. Se cree que se originó alrededor del siglo VI.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.UOvBrfvOQ4cSUf2L2uT93QHaEK%26r%3D0%26pid%3DApi&f=1&ipt=a396541c50fb59e8a4f505c3402ba97c77a6d0209de8663a4a76c6a9e38d4a67&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El cuerpo humano puede regenerar el hígado? 🫀",
+                explanation: "El hígado es el único órgano interno humano capaz de regenerarse por completo después de una lesión o extirpación parcial.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.explicit.bing.net%2Fth%3Fid%3DOIP._ZgBLUvRmA_-sdadrXyQngHaHa%26pid%3DApi&f=1&ipt=4edc36e4499e03db3dc84e41b91191f66dfdf2968da723c5abee7fcc06d5b32f&ipo=images",
+                answer: true
+            },
+            {
+                question: "¿El azúcar moreno es más saludable que el azúcar blanco? 🍚",
+                explanation: "El azúcar moreno contiene algo de melaza, que aporta minerales, pero en términos de calorías y efectos en la salud, es similar al azúcar blanco.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.QLbXvgvHQ4vzxKIRWVav8QHaFj%26pid%3DApi&f=1&ipt=259117a5803b3883c0f52d8c0124554439f1e27d5e9a71ae0f6cbf95db27f6e2&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El espacio exterior está completamente vacío? 🚀",
+                explanation: "El espacio exterior no está completamente vacío; contiene partículas de baja densidad, radiación y campos magnéticos.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.kBY4LxAeo1gzY_un8PIWJAHaEb%26r%3D0%26pid%3DApi&f=1&ipt=7f3686431242c31b723c640add287e470675ad6955d37b97d226c9d0c393817c&ipo=images",
+                answer: false
+            },
+            {
+                question: "¿El agua puede existir en los tres estados de la materia a temperatura ambiente en la Tierra? 💧",
+                explanation: "El agua puede existir como sólido (hielo), líquido (agua) y gas (vapor) a temperatura ambiente en la Tierra bajo diferentes condiciones.",
+                image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.CDLeDXUuGeR9JKDnzDTpCgHaDt%26pid%3DApi&f=1&ipt=a51369daeac5f3fb268d1a3a03b17d3e94f3bfe2f1c496206aa717253ec3e195&ipo=images",
+                answer: true
+            }
+        ];
+        let currentImageData = null;
+        let answeredQuestions = 0;
+
+        function addQuestion() {
+            const questionText = document.getElementById("new-question").value.trim();
+            const explanationText = document.getElementById("new-explanation").value.trim();
+            const imageInput = document.getElementById("new-image");
+            const answer = document.getElementById("new-answer").value === "true";
+
+            if (!questionText) {
+                alert("Por favor, ingresa una pregunta");
+                return;
+            }
+
+            if (!explanationText) {
+                alert("Por favor, ingresa una explicación");
+                return;
+            }
+
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImageData = e.target.result;
+                    questions.push({
+                        question: questionText,
+                        explanation: explanationText,
+                        image: currentImageData,
+                        answer: answer
+                    });
+                    updateQuestionsList();
+                    resetForm();
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                questions.push({
+                    question: questionText,
+                    explanation: explanationText,
+                    image: currentImageData,
+                    answer: answer
+                });
+                updateQuestionsList();
+                resetForm();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById("new-question").value = "";
+            document.getElementById("new-explanation").value = "";
+            document.getElementById("new-image").value = "";
+            document.getElementById("image-preview").style.display = "none";
+            currentImageData = null;
+        }
+
+        function updateQuestionsList() {
+            const questionsList = document.getElementById("questions-list");
+            questionsList.innerHTML = questions.map((q, index) => `
+                <li>
+                    <div class="question-content">
+                        <span>${q.question}</span>
+                        ${q.image ? `<img src="${q.image}" class="question-image" alt="Imagen de la pregunta">` : ""}
+                    </div>
+                    <div class="question-actions">
+                        <button onclick="editQuestion(${index})">Editar</button>
+                        <button onclick="deleteQuestion(${index})">Eliminar</button>
+                        <button onclick="showAnswer('${q.explanation}', ${q.answer}, ${index})">Ver Respuesta</button>
+                    </div>
+                </li>
+            `).join("");
+        }
+
+        function showAnswer(explanation, answer, index) {
+            const userAnswer = confirm(`Pregunta: ${questions[index].question}\n\n¿Es verdadero o falso?\n\nPresiona OK para Verdadero o Cancelar para Falso`);
+            
+            if (userAnswer === answer) {
+                answeredQuestions++;
+                alert(`¡Correcto! ✅\n\nExplicación: ${explanation}`);
+                
+                // Verificar si se respondieron todas las preguntas
+                if (answeredQuestions === questions.length) {
+                    showCelebration();
+                }
+            } else {
+                alert(`Incorrecto ❌\n\nExplicación: ${explanation}\n\nLa respuesta correcta era: ${answer ? "Verdadero" : "Falso"}`);
+            }
+            
+            setTimeout(() => {
+                alert("Tiempo terminado");
+            }, 20000); // 20 segundos
+        }
+
+        function showCelebration() {
+            const celebration = document.getElementById('celebration');
+            celebration.style.display = 'flex';
+            createConfetti();
+        }
+
+        function hideCelebration() {
+            const celebration = document.getElementById('celebration');
+            celebration.style.display = 'none';
+            answeredQuestions = 0; // Resetear contador
+            removeConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const container = document.body;
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                confetti.style.opacity = Math.random();
+                container.appendChild(confetti);
+            }
+        }
+
+        function removeConfetti() {
+            const confettiElements = document.querySelectorAll('.confetti');
+            confettiElements.forEach(el => el.remove());
+        }
+
+        function editQuestion(index) {
+            const question = questions[index];
+            document.getElementById("new-question").value = question.question;
+            document.getElementById("new-explanation").value = question.explanation;
+            document.getElementById("new-answer").value = question.answer;
+            currentImageData = question.image;
+
+            if (currentImageData) {
+                const preview = document.getElementById("preview");
+                preview.src = currentImageData;
+                document.getElementById("image-preview").style.display = "block";
+            }
+
+            questions.splice(index, 1);
+            updateQuestionsList();
+            
+            // Desplazar hacia el formulario
+            document.getElementById("new-question").focus();
+        }
+
+        function deleteQuestion(index) {
+            if (confirm("¿Estás seguro de que quieres eliminar esta pregunta?")) {
+                questions.splice(index, 1);
+                updateQuestionsList();
+            }
+        }
+
+        function saveConfig() {
+            try {
+                localStorage.setItem("gameQuestions", JSON.stringify(questions));
+                alert("Configuración guardada correctamente");
+            } catch (e) {
+                alert("Error al guardar la configuración: " + e.message);
+            }
+        }
+
+        // Vista previa de la imagen seleccionada
+        document.getElementById("new-image").addEventListener("change", function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById("preview");
+                    preview.src = event.target.result;
+                    document.getElementById("image-preview").style.display = "block";
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        // Cargar preguntas guardadas al iniciar
+        document.addEventListener("DOMContentLoaded", function() {
+            try {
+                const savedQuestions = localStorage.getItem("gameQuestions");
+                if (savedQuestions) {
+                    questions = JSON.parse(savedQuestions);
+                }
+                updateQuestionsList();
+            } catch (e) {
+                console.error("Error al cargar preguntas:", e);
+            }
+        });
+    </script>
+</body>
+</html>
